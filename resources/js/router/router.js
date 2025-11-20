@@ -73,13 +73,13 @@ router.beforeEach((to, from, next) => {
     const isAuthenticated = AuthService.isAuthenticated();
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-    console.log('Router Guard:', {
-        to: to.name,
-        from: from.name,
-        isAuthenticated,
-        requiresAuth,
-        toMeta: to.meta
-    });
+    // console.log('Router Guard:', {
+    //     to: to.name,
+    //     from: from.name,
+    //     isAuthenticated,
+    //     requiresAuth,
+    //     toMeta: to.meta
+    // });
 
     // If route requires auth and user is not authenticated
     if (requiresAuth && !isAuthenticated) {

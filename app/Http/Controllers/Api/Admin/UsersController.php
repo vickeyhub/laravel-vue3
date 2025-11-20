@@ -60,4 +60,12 @@ class UsersController extends Controller
             ],
         ]);
     }
+
+    public function getUser($id){
+        $user = User::find($id);
+        return response()->json([
+            'success' => true,
+            'data' => $user,
+        ]);
+    }
 }

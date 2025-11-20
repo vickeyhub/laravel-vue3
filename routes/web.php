@@ -7,6 +7,12 @@ Route::get('/', function () {
     return view('customer.home');
 })->name('customer.home');
 
+Route::get('/about', function () {
+    return "About";
+})->name('customer.about');
+
+
+
 // Admin routes (Vue.js) - Non-SEO pages
 Route::prefix('admin')->group(function () {
     Route::get('{any}', function () {
