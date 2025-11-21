@@ -6,7 +6,9 @@
                 <h1 class="text-3xl font-bold text-slate-900">Users Management </h1>
                 <p class="text-slate-600 mt-1">Manage and view all registered users</p>
             </div>
-            <button class="btn btn-primary gap-2">
+            <button class="btn btn-primary gap-2"
+            @click="openUserForm(null, 'create')"
+            >
                 <i class="fas fa-user-plus"></i>
                 Add New User
             </button>
@@ -180,19 +182,20 @@
                                         <button
                                             @click="viewDetail(user.id)"
                                             class="btn btn-info btn-sm tooltip"
-                                            data-tip="View Details"
+                                            :data-tip="'View ' + user.name + ' Details'"
                                         >
                                             <i class="fas fa-eye text-white"></i>
                                         </button>
                                         <button
+                                        @click="openUserForm(user.id, 'edit')"
                                             class="btn btn-warning btn-sm tooltip"
-                                            data-tip="Edit User"
+                                            :data-tip="'Edit ' + user.name + ' Profile'"
                                         >
                                             <i class="fas fa-edit text-dark"></i>
                                         </button>
                                         <button
                                             class="btn btn-error btn-sm tooltip"
-                                            data-tip="Delete User"
+                                            :data-tip="'Delete ' + user.name + ' User'"
                                         >
                                             <i class="fas fa-trash text-white"></i>
                                         </button>
@@ -263,6 +266,10 @@
         @close="closeUserModal"
     />
     <UserForm
+        :formAction="formAction"
+        :userId="userId"
+        @close="closeUserForm"
+        @saved="handleUserSaved"
     />
 </template>
 
@@ -282,6 +289,8 @@ const perPage = ref(10);
 const currentPage = ref(1);
 const isUserDetailModalOpen = ref(false);
 const userDetail = ref(null);
+const formAction = ref(null);
+const userId = ref(null);
 
 // Pagination state
 const pagination = ref({
@@ -327,6 +336,26 @@ const visiblePages = computed(() => {
 const closeUserModal = () => {
     isUserDetailModalOpen.value = false;
     userDetail.value = null;
+};
+const openUserForm = (user_id, form_action) => {
+    formAction.value = form_action;
+    if(user_id) {
+        userId.value = user_id;
+    }
+    else {
+        userId.value = null;
+    }
+};
+
+const closeUserForm = () => {
+    // Reset formAction to null so modal can be opened again
+    formAction.value = null;
+    userId.value = null;
+};
+
+const handleUserSaved = () => {
+    // Refresh users list after creating/updating user
+    fetchUsers();
 };
 
 // Methods

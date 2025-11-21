@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -65,6 +66,62 @@ class UsersController extends Controller
         $user = User::find($id);
         return response()->json([
             'success' => true,
+            'data' => $user,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'is_admin' => 'boolean',
+        ]);
+
+        // Create user
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'is_admin' => $validated['is_admin'] ?? false,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User created successfully',
+            'data' => $user,
+        ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Validate the request
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:8',
+            'is_admin' => 'boolean',
+        ]);
+
+        // Update user
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->is_admin = $validated['is_admin'] ?? false;
+        
+        // Only update password if provided
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+        
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User updated successfully',
             'data' => $user,
         ]);
     }

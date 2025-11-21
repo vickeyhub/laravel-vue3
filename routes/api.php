@@ -28,6 +28,8 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/users', [UsersController::class, 'getUsers']);
+    Route::post('/users', [UsersController::class, 'store']);
     Route::get('/users/{id}', [UsersController::class, 'getUser']);
+    Route::put('/users/{id}', [UsersController::class, 'update']);
 });
 
